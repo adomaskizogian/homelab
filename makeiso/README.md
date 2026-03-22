@@ -1,6 +1,7 @@
 # makeiso
 
 Builds a preseeded Debian netinstall ISO with automated installation settings baked in. amd64 only.
+Ships with a pre-configured user `fragmented-agent`, SSH pubkey, and SSH hardening.
 
 ## What it does
 
