@@ -11,3 +11,7 @@ Builds an unattended Debian install ISO.
 Install the OS without having to interact with the physical machine.
 Plug in the usb, turn on the machine and wait for it to appear on network.
 Updates all packages, configures pubkey and hardens ssh setup. The resulting installation is minimal yet secure - just enough to handover further configuration to ansible.
+
+### [rand](rand)
+
+Misc scripts and documentation.
