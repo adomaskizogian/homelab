@@ -13,3 +13,9 @@ tasks:
         msg: 'DEVICE must be set'
     cmds:
       - sudo dd if={{.IMG}} of={{.DEVICE}} bs=4M status=progress conv=fsync
+  lint:yaml:
+    desc: lint yaml files. Lints all yaml files or staged if any
+    cmds:
+      - |
+        STAGED="$(git diff-index --cached --name-only HEAD -- '*.yaml' '*.yml')"
+        [ -n "$STAGED" ] && yamllint $STAGED || yamllint .
