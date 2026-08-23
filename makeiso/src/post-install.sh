@@ -18,7 +18,7 @@ EOF
 echo 'Setting up pub-key'
 
 mkdir -p /home/fragmented-agent/.ssh
-echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJDFEb1hybmPSSGHZTE11grwYHZjg0gVgJMYu3Z8atio fragmented-agent' > /home/fragmented-agent/.ssh/authorized_keys
+echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINYL5ORdHgt9IBhUerv/rB/jSK3GVK2VoiBm4hqd3MoQ fragmented-agent' > /home/fragmented-agent/.ssh/authorized_keys
 chown -R fragmented-agent:fragmented-agent /home/fragmented-agent/.ssh
 chmod 700 /home/fragmented-agent/.ssh
 chmod 600 /home/fragmented-agent/.ssh/authorized_keys
