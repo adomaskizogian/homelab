@@ -18,7 +18,7 @@ else
     mkdir -p "$WORK_DIR"
 fi
 
-VERSION="${VERSION:-13.4.0}"
+VERSION="${VERSION:-13.6.0}"
 OUT_DIR="${OUT_DIR:-.}"
 
 ISO_PATH="$WORK_DIR/debian-$VERSION-amd64-netinst.iso"

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-VERSION="${VERSION:-13.4.0}"
+VERSION="${VERSION:-13.6.0}"
 
 BUILDER_NAME="makeiso-$$"
 
