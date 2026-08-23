@@ -1,0 +1,92 @@
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - storage_device_id is defined
+      - storage_device_id | length > 0
+      - storage_mount_point is defined
+      - storage_mount_point | length > 0
+
+- name: Install storage utilities
+  ansible.builtin.apt:
+    name:
+      - parted
+      - e2fsprogs
+    state: present
+
+- name: Check if mount point is already mounted
+  ansible.builtin.command:
+    cmd: findmnt -n --target "{{ storage_mount_point }}"
+  register: storage_mount_check
+  changed_when: false
+  failed_when: storage_mount_check.rc not in [0, 1]
+
+- name: Stop if already mounted
+  ansible.builtin.meta: end_role
+  when: storage_mount_check.rc == 0
+
+- name: Resolve device ID
+  ansible.builtin.command:
+    cmd: readlink -f "{{ storage_device_id }}"
+  register: storage_device_path
+  changed_when: false
+
+- name: Check resolved device
+  ansible.builtin.stat:
+    path: "{{ storage_device_path.stdout }}"
+  register: storage_device
+
+- name: Validate device ID
+  ansible.builtin.assert:
+    that:
+      - storage_device.stat.exists
+      - storage_device.stat.isblk
+    fail_msg: >-
+      Device {{ storage_device_id }} does not exist or does not resolve
+      to a block device.
+
+- name: Check for partition table
+  ansible.builtin.command:
+    cmd: lsblk -dn -o PTTYPE "{{ storage_device_path.stdout }}"
+  register: storage_partition_table
+  changed_when: false
+
+- name: Fail if partition table already exists
+  ansible.builtin.fail:
+    msg: >-
+      {{ storage_device_id }} is not mounted and already has a
+      {{ storage_partition_table.stdout }} partition table.
+      Refusing to modify it.
+  when: storage_partition_table.stdout | length > 0
+
+- name: Create GPT partition table
+  community.general.parted:
+    device: "{{ storage_device_path.stdout }}"
+    label: gpt
+    number: 1
+    part_start: 1MiB
+    part_end: 100%
+    state: present
+
+- name: Wait for partition device
+  ansible.builtin.command:
+    cmd: udevadm settle
+  changed_when: false
+
+- name: Create ext4 filesystem
+  community.general.filesystem:
+    dev: "{{ storage_device_id }}-part1"
+    fstype: ext4
+
+- name: Ensure mount point exists
+  ansible.builtin.file:
+    path: "{{ storage_mount_point }}"
+    state: directory
+    mode: "0755"
+
+- name: Mount filesystem
+  ansible.posix.mount:
+    path: "{{ storage_mount_point }}"
+    src: "{{ storage_device_id }}-part1"
+    fstype: ext4
+    opts: defaults
+    state: mounted

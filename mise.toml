@@ -8,12 +8,15 @@ yamllint = "1.38.0"
 
 [env]
 ANSIBLE_CONFIG = "{{ config_root }}/ansible/ansible.cfg"
+ANSIBLE_COLLECTIONS_PATH = { value = "{{ tools.ansible.path }}/..", tools = true }
 
 [hooks.postinstall]
 run = """
 mkdir -p {{ config_root }}/.git/hooks &&
 mise generate git-pre-commit > {{ config_root }}/.git/hooks/pre-commit &&
-chmod +x {{ config_root }}/.git/hooks/pre-commit
+chmod +x {{ config_root }}/.git/hooks/pre-commit;
+
+ansible-galaxy collection install -r ansible/collections/requirements.yaml
 """
 
 [tasks.pre-commit]
