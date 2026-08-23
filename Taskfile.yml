@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+tasks:
+  usb:
+    desc: Write preseeded image to a USB device
+    interactive: true
+    preconditions:
+      - sh: test -n '{{.IMG}}'
+        msg: 'IMG must be set'
+      - sh: test -n '{{.DEVICE}}'
+        msg: 'DEVICE must be set'
+    cmds:
+      - sudo dd if={{.IMG}} of={{.DEVICE}} bs=4M status=progress conv=fsync
