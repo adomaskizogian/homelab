@@ -1,0 +1,5 @@
+server:
+  hosts:
+    central-neurosis-unit
+  vars:
+    ansible_user: fragmented-agent
